@@ -442,9 +442,14 @@ module powerbi.visuals.samples {
             }
             timelineFormat.showHeader = showHeader;
             timelineData.categorySourceName = dataView.categorical.categories[0].source.displayName;
+
+            if (dataView.categorical.categories.length <= 0 || dataView.categorical.categories[0] === undefined || dataView.categorical.categories[0].identityFields === undefined || dataView.categorical.categories[0].identityFields.length <= 0) return;
             timelineData.columnIdentity = dataView.categorical.categories[0].identityFields[0];
             var timesLine = timelineData.dataView.categorical.categories[0].values;
+
             if (timesLine.length <= 0) return;
+            if (timesLine[0].getTime === undefined) return;
+
             timelineData.startDate = new Date(timesLine[0].getTime());
             timelineData.selectionStartDate = new Date(timesLine[0].getTime());
             timelineData.endDate = new Date(timesLine[timesLine.length - 1].getTime());
@@ -914,6 +919,8 @@ module powerbi.visuals.samples {
 
         public renderTimeRangeText(timelineData: TimelineData, timelineFormat: TimelineFormat) {
             var timeRangeText = '';
+            if (timelineData.selectionStartDate === undefined || timelineData.selectionEndDate === undefined) return;
+
             switch (timelineData.granularity) {
                 case "day": timeRangeText = Timeline.monthNames[timelineData.selectionStartDate.getMonth()] + ' ' + timelineData.selectionStartDate.getDate() + ' ' + timelineData.selectionStartDate.getFullYear() + ' - ' +
                     Timeline.monthNames[timelineData.selectionEndDate.getMonth()] + ' ' + timelineData.selectionEndDate.getDate() + ' ' + timelineData.selectionEndDate.getFullYear();
